@@ -75,11 +75,10 @@ const _refreshToken = refreshToken => {
 
 /**
  * Get Subrredit Top Posts
- * @param {String} token the reddit Token
  * @param {String} subrredit the name of the subrredit that wants to be loaded
  * @param {Number} limit the number of posts to be retrieved
  */
-const _getTopPosts = (subrredit = "foodPorn", limit = 25) => {
+const _getTopPosts = (subrredit = "earthporn", limit = 25) => {
   const token = TokenService.getToken();
   const config = {
     headers: { Authorization: "bearer " + token }

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- TODO add navigation -->
+    <deviget-navbar v-if="!isLoginPage"></deviget-navbar>
 
     <v-content>
       <v-container fluid>
@@ -16,10 +16,18 @@
 </template>
 
 <script>
+import DevigetNavbar from "./components/DevigetNavbar";
+
 export default {
   name: "App",
-  data: () => ({
-    //
-  })
+  components: { DevigetNavbar },
+  computed: {
+    isLoginPage: function() {
+      return (
+        this.$route.name === "login-home" ||
+        this.$route.name === "login-callback"
+      );
+    }
+  }
 };
 </script>
