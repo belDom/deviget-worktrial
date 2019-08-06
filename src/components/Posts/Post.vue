@@ -18,7 +18,7 @@
         &nbsp;
         {{ post.numberOfComments }} <v-icon>mdi-comment</v-icon>
         <v-spacer></v-spacer>
-        <v-btn icon>
+        <v-btn icon @click="saveToGallery" :disabled="post.savedToGallery">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
         <v-btn icon :disabled="post.archived" @click="archive">
@@ -32,6 +32,8 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import { PostsArchiveService } from "../../services/PostsArchive.service";
+import { GalleryService } from "../../services/Gallery.service";
+import { GalleryItem } from "../../model/GalleryItem";
 
 export default {
   name: "Post",
@@ -39,15 +41,33 @@ export default {
     post: Object
   },
   computed: {
-    ...mapGetters("Posts", ["postsArchived"])
+    ...mapGetters("Posts", ["postsArchived"]),
+    ...mapGetters("Gallery", ["pictures"])
   },
   methods: {
-    ...mapMutations("Posts", ["archivePost", "flagPostAsArchived"]),
+    ...mapMutations("Posts", [
+      "archivePost",
+      "flagPostAsArchived",
+      "savePostToGallery"
+    ]),
+    ...mapMutations("Gallery", ["addPicture"]),
     archive() {
       if (!this.post.archived) {
         this.archivePost(this.post.id);
         this.flagPostAsArchived(this.post);
         PostsArchiveService.saveArchivedPosts(this.postsArchived);
+      }
+    },
+    saveToGallery() {
+      if (!this.post.savedToGallery) {
+        this.savePostToGallery(this.post);
+        let picture = new GalleryItem(
+          this.post.id,
+          this.post.thumbnail,
+          this.post.picture
+        );
+        this.addPicture(picture);
+        GalleryService.setGallery(this.pictures);
       }
     }
   }

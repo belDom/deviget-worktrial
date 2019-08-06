@@ -9,11 +9,11 @@ export default {
     }
   },
   mutations: {
-    addPicture() {
-      // TODO
+    setPictures(state, pictures) {
+      state.pictures = pictures;
     },
-    removePicture() {
-      // TODO
+    addPicture(state, picture) {
+      state.pictures.push(picture);
     }
   }
 };

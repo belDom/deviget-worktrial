@@ -6,6 +6,7 @@ import Home from "./views/Home";
 import Login from "./views/Login";
 import LoginHome from "./views/Login/LoginHome";
 import LoginCallback from "./views/Login/LoginCallback";
+import Gallery from "./views/Gallery";
 
 const moment = require("moment");
 
@@ -20,6 +21,14 @@ const router = new Router({
       component: Home,
       meta: {
         public: false
+      }
+    },
+    {
+      path: "/gallery",
+      name: "gallery",
+      component: Gallery,
+      meta: {
+        public: true
       }
     },
     {

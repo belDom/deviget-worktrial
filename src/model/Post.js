@@ -10,6 +10,7 @@ export class Post {
    * @param {String} picture the picture URL
    * @param {Boolean} archived if the post was archived
    * @param {Boolean} visited if the post was visited
+   * @param {Boolean} savedToGallery is pictures saved in gallery
    */
   constructor(
     id,
@@ -20,7 +21,8 @@ export class Post {
     thumbnail,
     picture,
     archived,
-    visited
+    visited,
+    savedToGallery
   ) {
     this._id = id;
     this._title = title;
@@ -31,7 +33,7 @@ export class Post {
     this._picture = picture;
     this._archived = archived;
     this._visited = visited;
-    this._savedToGallery = false;
+    this._savedToGallery = savedToGallery;
   }
 
   get id() {

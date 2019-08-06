@@ -9,7 +9,7 @@
     <v-list dense nav class="py-0">
       <v-list-item two-line>
         <v-list-item-avatar>
-          <img src="./../assets/logo.png" alt="Deviget Logo"/>
+          <img src="./../assets/logo.png" alt="Deviget Logo" />
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -20,25 +20,23 @@
 
       <v-divider></v-divider>
 
-      <v-list-item>
+      <v-list-item @click="navigateToPosts">
+        <v-list-item-icon>
+          <v-icon>mdi-file-document</v-icon>
+        </v-list-item-icon>
+
+        <v-list-item-content>
+          <v-list-item-title>Posts</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item @click="navigateToGallery">
         <v-list-item-icon>
           <v-icon>mdi-image</v-icon>
         </v-list-item-icon>
 
         <v-list-item-content>
           <v-list-item-title>My Gallery</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list-item>
-        <v-list-item-icon>
-          <v-icon>mdi-settings</v-icon>
-        </v-list-item-icon>
-
-        <v-list-item-content>
-          <v-list-item-title>
-            Settings
-          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -51,6 +49,14 @@ export default {
     return {
       expandOnHover: true
     };
+  },
+  methods: {
+    navigateToGallery() {
+      this.$router.push("/gallery");
+    },
+    navigateToPosts() {
+      this.$router.push("/");
+    }
   }
 };
 </script>

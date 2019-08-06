@@ -2,6 +2,7 @@ import RedditService from "../services/Reddit.service";
 import { Post } from "../model/Post";
 import { PostsVisitedService } from "../services/PostsVisited.service";
 import { PostsArchiveService } from "../services/PostsArchive.service";
+import { GalleryService } from "../services/Gallery.service";
 
 export default {
   namespaced: true,
@@ -58,6 +59,9 @@ export default {
     },
     flagPostAsArchived(state, post) {
       post.archived = true;
+    },
+    savePostToGallery(state, post) {
+      post.savedToGallery = true;
     }
   },
   actions: {
@@ -85,6 +89,9 @@ export default {
               const isPostArchived = PostsArchiveService.isPostArchived(
                 post.id
               );
+              const isPostPictureSavedToGallery = GalleryService.isPictureSaved(
+                post.id
+              );
               return new Post(
                 post.id,
                 post.title,
@@ -94,7 +101,8 @@ export default {
                 post.thumbnail,
                 post.url,
                 isPostArchived,
-                isPostVisited
+                isPostVisited,
+                isPostPictureSavedToGallery
               );
             });
 
