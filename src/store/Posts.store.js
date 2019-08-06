@@ -1,5 +1,6 @@
 import RedditService from "../services/Reddit.service";
 import { Post } from "../model/Post";
+import { PostsVisitedService } from "../services/PostsVisited.service";
 
 export default {
   namespaced: true,
@@ -8,6 +9,7 @@ export default {
     after: undefined,
     before: undefined,
     subrredit: "earthporn",
+    postsVisited: undefined,
     limit: 5
   },
   getters: {
@@ -19,9 +21,18 @@ export default {
     },
     beforePosts(state) {
       return state.before;
+    },
+    postsVisited(state) {
+      return state.postsVisited;
     }
   },
   mutations: {
+    addPostVisited(state, post) {
+      state.postsVisited.push(post);
+    },
+    setPostsVisited(state, posts) {
+      state.postsVisited = posts ? posts : [];
+    },
     setPosts(state, posts) {
       state.posts = state.posts.concat(posts);
     },
@@ -30,6 +41,9 @@ export default {
     },
     setBeforePosts(state, beforePointer) {
       state.before = beforePointer;
+    },
+    flagPostAsVisited(state, post) {
+      post.visited = true;
     }
   },
   actions: {
@@ -45,9 +59,14 @@ export default {
       )
         .then(response => {
           if (response.data.children.length > 0) {
+            let postsVisited = PostsVisitedService.getPostsVisited() || [];
+            commit("setPostsVisited", postsVisited);
+
             let posts = response.data.children.map(entry => {
               let post = entry.data;
+              const isPostVisited = PostsVisitedService.isPostVisited(post.id);
               return new Post(
+                post.id,
                 post.title,
                 post["author_fullname"],
                 post.created,
@@ -55,7 +74,7 @@ export default {
                 post.thumbnail,
                 post.url,
                 post.archived,
-                post.visited
+                isPostVisited
               );
             });
 

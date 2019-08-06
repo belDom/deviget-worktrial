@@ -1,6 +1,7 @@
 export class Post {
   /**
    * Post
+   * @param {String} id the post ID
    * @param {String} title the post title
    * @param {String} author the name of the author
    * @param {Date} entryDate the entry date
@@ -11,6 +12,7 @@ export class Post {
    * @param {Boolean} visited if the post was visited
    */
   constructor(
+    id,
     title,
     author,
     entryDate,
@@ -20,6 +22,7 @@ export class Post {
     archived,
     visited
   ) {
+    this._id = id;
     this._title = title;
     this._author = author;
     this._entryDate = entryDate;
@@ -29,6 +32,10 @@ export class Post {
     this._archived = archived;
     this._visited = visited;
     this._savedToGallery = false;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get title() {

@@ -27,7 +27,7 @@
       <template v-slot:default="props">
         <v-layout column>
           <v-flex v-for="item in props.items" :key="item.name" xs12>
-            <v-card @click="openPost(item)">
+            <v-card @click="selectPost(item)">
               <v-list-item three-line>
                 <v-list-item-content class="align-self-start">
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -80,7 +80,8 @@
   </v-container>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import { PostsVisitedService } from "../../services/PostsVisited.service";
 
 export default {
   name: "SideBar",
@@ -98,12 +99,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("Posts", ["posts", "afterPosts", "beforePosts"]),
+    ...mapGetters("Posts", [
+      "posts",
+      "afterPosts",
+      "beforePosts",
+      "postsVisited"
+    ]),
     numberOfPages() {
       return Math.ceil(this.posts.length / this.itemsPerPage);
     }
   },
   methods: {
+    ...mapMutations("Posts", ["addPostVisited", "flagPostAsVisited"]),
     ...mapActions("Posts", ["getPosts"]),
     nextPage() {
       if (this.page + 1 <= this.numberOfPages) {
@@ -120,6 +127,15 @@ export default {
       if (this.page - 1 >= 1) {
         this.page -= 1;
       }
+    },
+    selectPost(post) {
+      if (!this.postsVisited.includes(post.id)) {
+        this.flagPostAsVisited(post);
+        this.addPostVisited(post.id);
+        PostsVisitedService.setPostsVisited(this.postsVisited);
+      }
+
+      this.openPost(post);
     }
   },
   mounted() {
