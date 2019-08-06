@@ -46,6 +46,9 @@
                     <v-icon small v-else>mdi-bookmark</v-icon>
                     {{ item.numberOfComments }}
                     <v-icon small>mdi-comment</v-icon>
+
+                    <v-icon small v-if="item.archived">mdi-package-up</v-icon>
+                    <v-icon small v-else>mdi-archive</v-icon>
                   </v-list-item-subtitle>
                 </v-list-item-content>
 

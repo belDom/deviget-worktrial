@@ -13,14 +13,15 @@
         </v-list-item-content>
       </v-list-item>
       <v-card-actions>
-        <v-icon>mdi-eye</v-icon>
+        <v-icon v-if="post.visited">mdi-eye-check</v-icon>
+        <v-icon v-else>mdi-eye</v-icon>
         &nbsp;
         {{ post.numberOfComments }} <v-icon>mdi-comment</v-icon>
         <v-spacer></v-spacer>
         <v-btn icon>
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn icon :disabled="post.archived">
+        <v-btn icon :disabled="post.archived" @click="archive">
           <v-icon>mdi-archive</v-icon>
         </v-btn>
       </v-card-actions>
@@ -29,10 +30,26 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+import { PostsArchiveService } from "../../services/PostsArchive.service";
+
 export default {
   name: "Post",
   props: {
     post: Object
+  },
+  computed: {
+    ...mapGetters("Posts", ["postsArchived"])
+  },
+  methods: {
+    ...mapMutations("Posts", ["archivePost", "flagPostAsArchived"]),
+    archive() {
+      if (!this.post.archived) {
+        this.archivePost(this.post.id);
+        this.flagPostAsArchived(this.post);
+        PostsArchiveService.saveArchivedPosts(this.postsArchived);
+      }
+    }
   }
 };
 </script>

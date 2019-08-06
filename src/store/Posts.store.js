@@ -1,6 +1,7 @@
 import RedditService from "../services/Reddit.service";
 import { Post } from "../model/Post";
 import { PostsVisitedService } from "../services/PostsVisited.service";
+import { PostsArchiveService } from "../services/PostsArchive.service";
 
 export default {
   namespaced: true,
@@ -10,6 +11,7 @@ export default {
     before: undefined,
     subrredit: "earthporn",
     postsVisited: undefined,
+    postsArchived: undefined,
     limit: 5
   },
   getters: {
@@ -24,6 +26,9 @@ export default {
     },
     postsVisited(state) {
       return state.postsVisited;
+    },
+    postsArchived(state) {
+      return state.postsArchived;
     }
   },
   mutations: {
@@ -32,6 +37,12 @@ export default {
     },
     setPostsVisited(state, posts) {
       state.postsVisited = posts ? posts : [];
+    },
+    archivePost(state, postId) {
+      state.postsArchived.push(postId);
+    },
+    setPostsArchived(state, posts) {
+      state.postsArchived = posts;
     },
     setPosts(state, posts) {
       state.posts = state.posts.concat(posts);
@@ -44,6 +55,9 @@ export default {
     },
     flagPostAsVisited(state, post) {
       post.visited = true;
+    },
+    flagPostAsArchived(state, post) {
+      post.archived = true;
     }
   },
   actions: {
@@ -62,9 +76,15 @@ export default {
             let postsVisited = PostsVisitedService.getPostsVisited() || [];
             commit("setPostsVisited", postsVisited);
 
+            let postsArchived = PostsArchiveService.getPostsArchived() || [];
+            commit("setPostsArchived", postsArchived);
+
             let posts = response.data.children.map(entry => {
               let post = entry.data;
               const isPostVisited = PostsVisitedService.isPostVisited(post.id);
+              const isPostArchived = PostsArchiveService.isPostArchived(
+                post.id
+              );
               return new Post(
                 post.id,
                 post.title,
@@ -73,7 +93,7 @@ export default {
                 post["num_comments"],
                 post.thumbnail,
                 post.url,
-                post.archived,
+                isPostArchived,
                 isPostVisited
               );
             });
