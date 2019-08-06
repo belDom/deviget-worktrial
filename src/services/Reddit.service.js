@@ -77,22 +77,36 @@ const _refreshToken = refreshToken => {
  * Get Subrredit Top Posts
  * @param {String} subrredit the name of the subrredit that wants to be loaded
  * @param {Number} limit the number of posts to be retrieved
+ * @param {String} before the before posts pointer
+ * @param {String} after the after pointer
  */
-const _getTopPosts = (subrredit = "earthporn", limit = 25) => {
+const _getTopPosts = (
+  subrredit = "earthporn",
+  limit = 15,
+  before = undefined,
+  after = undefined
+) => {
   const token = TokenService.getToken();
   const config = {
     headers: { Authorization: "bearer " + token }
   };
-
-  return Request.get(
+  let URL =
     PATHS.POSTS_BASE_URL +
-      subrredit +
-      "/" +
-      PATHS.POSTS_TOP +
-      "?limit=" +
-      limit,
-    config
-  );
+    subrredit +
+    "/" +
+    PATHS.POSTS_TOP +
+    "?limit=" +
+    limit;
+
+  if (after) {
+    URL = URL + "&after=" + after;
+  }
+
+  if (before) {
+    URL = URL + "&before=" + before;
+  }
+
+  return Request.get(URL, config);
 };
 
 export default {

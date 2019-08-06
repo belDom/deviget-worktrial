@@ -1,6 +1,7 @@
 <template>
   <v-container fluid grid-list-md>
     <v-data-iterator
+      :loading="isLoading"
       :items="posts"
       :items-per-page.sync="itemsPerPage"
       :page="page"
@@ -59,30 +60,8 @@
 
       <template v-slot:footer>
         <v-layout mt-2 wrap align-center justify-center>
-          <span class="grey--text">Items per page</span>
-          <v-menu offset-y>
-            <template v-slot:activator="{ on }">
-              <v-btn dark text color="primary" class="ml-2" v-on="on">
-                {{ itemsPerPage }}
-                <v-icon>mdi-keyboard_arrow_down</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="(number, index) in itemsPerPageArray"
-                :key="index"
-                @click="updateItemsPerPage(number)"
-              >
-                <v-list-item-title>{{ number }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-
           <v-spacer></v-spacer>
 
-          <span class="mr-4 grey--text"
-            >Page {{ page }} of {{ numberOfPages }}</span
-          >
           <v-btn
             fab
             dark
@@ -101,7 +80,7 @@
   </v-container>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "SideBar",
@@ -110,30 +89,44 @@ export default {
   },
   data() {
     return {
-      itemsPerPageArray: [4, 8, 12],
       search: "",
       sortDesc: false,
       page: 1,
-      itemsPerPage: 4,
-      sortBy: "name"
+      itemsPerPage: 5,
+      sortBy: "name",
+      isLoading: false
     };
   },
   computed: {
-    ...mapGetters("Posts", ["posts"]),
+    ...mapGetters("Posts", ["posts", "afterPosts", "beforePosts"]),
     numberOfPages() {
       return Math.ceil(this.posts.length / this.itemsPerPage);
     }
   },
   methods: {
+    ...mapActions("Posts", ["getPosts"]),
     nextPage() {
-      if (this.page + 1 <= this.numberOfPages) this.page += 1;
+      if (this.page + 1 <= this.numberOfPages) {
+        this.page += 1;
+      } else if (this.afterPosts) {
+        this.isLoading = true;
+        this.getPosts({ after: this.afterPosts }).finally(() => {
+          this.page += 1;
+          this.isLoading = false;
+        });
+      }
     },
     formerPage() {
-      if (this.page - 1 >= 1) this.page -= 1;
-    },
-    updateItemsPerPage(number) {
-      this.itemsPerPage = number;
+      if (this.page - 1 >= 1) {
+        this.page -= 1;
+      }
     }
+  },
+  mounted() {
+    this.isLoading = true;
+    this.getPosts().finally(() => {
+      this.isLoading = false;
+    });
   }
 };
 </script>

@@ -4,27 +4,45 @@ import { Post } from "../model/Post";
 export default {
   namespaced: true,
   state: {
-    posts: []
+    posts: [],
+    after: undefined,
+    before: undefined,
+    subrredit: "earthporn",
+    limit: 5
   },
   getters: {
     posts(state) {
       return state.posts;
+    },
+    afterPosts(state) {
+      return state.after;
+    },
+    beforePosts(state) {
+      return state.before;
     }
   },
   mutations: {
-    flagPostAsSeen() {
-      // TODO
-    },
     setPosts(state, posts) {
-      state.posts = posts;
+      state.posts = state.posts.concat(posts);
     },
-    dismissPost() {
-      // TODO
+    setAfterPosts(state, afterPointer) {
+      state.after = afterPointer;
+    },
+    setBeforePosts(state, beforePointer) {
+      state.before = beforePointer;
     }
   },
   actions: {
-    getPosts({ commit }) {
-      RedditService.getTopPosts()
+    getPosts(
+      { state, commit },
+      loadFrom = { before: undefined, after: undefined }
+    ) {
+      RedditService.getTopPosts(
+        state.subrredit,
+        state.limit,
+        loadFrom.before,
+        loadFrom.after
+      )
         .then(response => {
           if (response.data.children.length > 0) {
             let posts = response.data.children.map(entry => {
@@ -43,6 +61,9 @@ export default {
 
             commit("setPosts", posts);
           }
+
+          commit("setAfterPosts", response.data.after);
+          commit("setBeforePosts", response.data.before);
 
           return response;
         })

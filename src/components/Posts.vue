@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import Post from "./Posts/Post";
 import SideBar from "./Posts/SideBar";
 
@@ -34,13 +34,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions("Posts", ["getPosts"]),
     selectPost(post) {
       this.postSelected = post;
     }
-  },
-  mounted() {
-    this.getPosts();
   }
 };
 </script>
